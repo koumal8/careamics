@@ -5,7 +5,7 @@ This module contains the main CAREamics class, the Engine. The Engine allows tra
 a model and using it for prediction.
 """
 from logging import FileHandler
-from pathlib import Path
+from pathlib import Path, PosixPath
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
@@ -93,6 +93,7 @@ class Engine:
         config: Optional[Configuration] = None,
         config_path: Optional[Union[str, Path]] = None,
         model_path: Optional[Union[str, Path]] = None,
+        log_dir_path: Optional[Union[str, Path]] = None,
         seed: Optional[int] = 42,
     ) -> None:
         """
@@ -169,7 +170,10 @@ class Engine:
         self.loss_func = create_loss_function(self.cfg)
 
         # Set logging
-        log_path = self.cfg.working_directory / "log.txt"
+        if log_dir_path is not None:
+            log_path = PosixPath(log_dir_path) / "log.txt"
+        else:
+            log_path = self.cfg.working_directory / "log.txt"
         self.logger = get_logger(__name__, log_path=log_path)
 
         # wandb
